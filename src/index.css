@@ -1,0 +1,147 @@
+.chat {
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  background-color: #f5f6fa;
+  height: 100vh;
+}
+
+.chat-wrapper {
+  background-color: white;
+  width: 90vw;
+  height: 100%;
+  max-height: 90vh;
+  -webkit-box-shadow: 0 0 10px 1px black;
+          box-shadow: 0 0 10px 1px black;
+  border-radius: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.chat-side {
+  border: 1px black solid;
+  -ms-flex-preferred-size: 30%;
+      flex-basis: 30%;
+}
+
+.chat-main {
+  height: 1rem;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 0.5rem 0;
+}
+
+.chat-main-messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: column-reverse;
+          flex-direction: column-reverse;
+}
+
+.chat-main-messages-bubble {
+  background-color: #3f51b5;
+  color: white;
+  border-radius: 1rem;
+  margin: 0.2rem;
+  padding: 0.5rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 60%;
+  overflow-wrap: break-word;
+  position: relative;
+}
+
+.chat-main-messages-bubble:hover .tooltip {
+  visibility: visible;
+  left: 0;
+}
+
+.chat-main-messages-bubble:nth-child(n + 5) {
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+}
+
+.chat-main-messages-bubble:nth-child(n + 5):hover .tooltip {
+  right: 0;
+}
+
+.chat-main-msg {
+  position: relative;
+}
+
+.chat-main-msg input {
+  width: calc(100% - 4rem);
+}
+
+.chat-main-msg button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  -webkit-transform: translate(-20%, 32%);
+          transform: translate(-20%, 32%);
+  z-index: 10;
+  font-size: 1rem;
+  background-color: #3f51b5;
+  color: white;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+
+.chat-main-msg button:active i {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.748);
+  padding: 0.2rem;
+  border-radius: 4px;
+  top: 0;
+  -webkit-transform: translate(0, -110%);
+          transform: translate(0, -110%);
+  z-index: 10;
+  visibility: hidden;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+button {
+  border: none;
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  cursor: pointer;
+}
+/*# sourceMappingURL=index.css.map */

@@ -1,16 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import Axios from "axios";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import { Alert } from "@material-ui/lab";
+
+import { TextField, Button, Typography, Link } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Alert } from "@material-ui/lab";
+import Spinner from "./Spinner";
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    marginBottom: "1rem"
+    marginBottom: "1rem",
   },
   register: {
     cursor: "pointer",
@@ -29,25 +28,32 @@ const Register = ({ setRegistered, handleRegisterSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== rePassword) {
-      setError("Passwords do not match!")
+      setError("Passwords do not match!");
       return;
     }
-    const url = "http://localhost:8000/api/users/register";
+    const url = "http://localhost:8000/api/user/register";
     setLoading(true);
-    const { data } = await Axios.post(url, {
-      username,
-      password,
-    });
-    setLoading(false);
-    if (!data.username && data.message) {
-      setError(data.message);
-      return;
-    };
-    setRegistered(true);
-    handleRegisterSuccess();
+    try {
+      const { data } = await Axios.post(url, {
+        username,
+        password,
+      });
+      if (!data.username && data.message) {
+        setError(data.message);
+        setLoading(false);
+        return;
+      }
+      handleRegisterSuccess();
+      setRegistered(true);
+      
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
   return (
     <>
+      <Spinner visible={loading} />
       <Typography component="h1" variant="h5" align="center">
         Sign in
       </Typography>
@@ -71,6 +77,12 @@ const Register = ({ setRegistered, handleRegisterSuccess }) => {
           variant="outlined"
           margin="normal"
           autoComplete="current-password"
+          helperText={
+            password.length < 8
+              ? "The password must be at least 8 characters long"
+              : null
+          }
+          error={password.length < 8 ? true : false}
           required
           fullWidth
           onChange={(e) => setPassword(e.target.value)}

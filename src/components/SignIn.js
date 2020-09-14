@@ -1,19 +1,24 @@
 import React from "react";
 import { useState } from "react";
 import Axios from "axios";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import { Alert } from "@material-ui/lab";
+
+import { TextField, Button, Typography, Link } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Alert } from "@material-ui/lab";
+import Spinner from "./Spinner";
+
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    marginBottom: "1rem"
+    marginBottom: "1rem",
   },
   register: {
     cursor: "pointer",
+  },
+  loading: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
   },
 }));
 
@@ -27,21 +32,28 @@ const SignIn = ({ setRegistered, handleSignInSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:8000/api/users/signin";
+    const url = "http://localhost:8000/api/user/signin";
     setLoading(true);
-    const { data } = await Axios.post(url, {
-      username,
-      password,
-    });
-    setLoading(false);
-    if (!data.username && data.message) {
-      setError(data.message)
-      return;
-    };
-    handleSignInSuccess();
+    try {
+      const { data } = await Axios.post(url, {
+        username,
+        password,
+      });
+      if (!data.username && data.message) {
+        setError(data.message);
+        setLoading(false);
+        return;
+      }
+      handleSignInSuccess();
+      
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
   };
   return (
     <>
+      <Spinner visible={loading} />
       <Typography component="h1" variant="h5" align="center">
         Sign in
       </Typography>
