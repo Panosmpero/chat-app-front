@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TextField } from "@material-ui/core";
 import openSocket from "socket.io-client";
-const ENDPOINT = "http://localhost:8000"
+const ENDPOINT = "http://localhost:8000";
+const socket = openSocket(ENDPOINT);
 
 const ChatScreen = () => {
-  const [myMessage, setMyMessage] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([
     "asaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadsad",
     "asdsdasaaaaaaaaaaadasadsda",
@@ -62,19 +63,26 @@ const ChatScreen = () => {
   ]);
 
   useEffect(() => {
-    const socket = openSocket(ENDPOINT);
-    socket.on("FromAPI", data => {
-      console.log(data)
-    })
-    return () => socket.disconnect()
-  },[])
+    socket.on("FromAPI", (data) => {
+      console.log(data);
+    });
+    return () => socket.disconnect();
+  }, []);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    socket.on("messages", (message) => {
+      setMessages((prev) => [message, ...prev]);
+    });
+    return () => socket.disconnect();
+  }, []);
+
+  const handleSendMessage = (e) => {
     e.preventDefault();
+
     // if no text return
-    if (!myMessage.length) return;
-    setMessages((prev) => [myMessage, ...prev]);
-    setMyMessage("");
+    if (!newMessage.length) return;
+
+    socket.emit("newMessage", newMessage, setNewMessage(""));
   };
 
   return (
@@ -84,7 +92,7 @@ const ChatScreen = () => {
           <div className="chat-side-channels"></div>
           <div className="chat-side-users"></div>
         </div>
-        <form className="chat-main" onSubmit={handleSubmit}>
+        <form className="chat-main" onSubmit={handleSendMessage}>
           <div className="chat-main-messages">
             {messages.map((message, id) => (
               <div key={id} className="chat-main-messages-bubble">
@@ -101,8 +109,8 @@ const ChatScreen = () => {
               autoComplete="off"
               fullWidth
               autoFocus
-              value={myMessage}
-              onChange={(e) => setMyMessage(e.target.value)}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
             />
             <button type="submit">
               <i className="fas fa-paper-plane"></i>

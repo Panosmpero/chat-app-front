@@ -58,6 +58,7 @@
 
           &:hover {
             .tooltip {
+              left: auto;
               right: 0;
             }
           }
@@ -84,10 +85,8 @@
         border-radius: 50%;
         padding: 0.5rem;
 
-        &:active {
-          i {
-            transform: scale(1.1);
-          }
+        i {
+          transform: translateX(-5%);
         }
       }
     }

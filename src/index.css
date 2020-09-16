@@ -83,6 +83,7 @@
 }
 
 .chat-main-messages-bubble:nth-child(n + 5):hover .tooltip {
+  left: auto;
   right: 0;
 }
 
@@ -108,9 +109,9 @@
   padding: 0.5rem;
 }
 
-.chat-main-msg button:active i {
-  -webkit-transform: scale(1.1);
-          transform: scale(1.1);
+.chat-main-msg button i {
+  -webkit-transform: translateX(-5%);
+          transform: translateX(-5%);
 }
 
 .tooltip {
