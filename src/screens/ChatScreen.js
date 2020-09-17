@@ -1,77 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { TextField } from "@material-ui/core";
 import openSocket from "socket.io-client";
 const ENDPOINT = "http://localhost:8000";
 const socket = openSocket(ENDPOINT);
 
-const ChatScreen = () => {
+const ChatScreen = (props) => {
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([
-    "asaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadsad",
-    "asdsdasaaaaaaaaaaadasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-    "asdsdasdasadsda",
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [channel, setChannel] = useState("Diablo");
+  const [totalUsers, setTotalUsers] = useState(0);
+
+  const { userInfo: user } = useSelector((state) => state.userSignin);
+
+  // if not logged in redirect
+  useEffect(() => {
+    if (!user) props.history.push("/signin");
+    if (user) socket.emit("join channel", { username: user.username, channel });
+  }, [props.history, user, channel]);
 
   useEffect(() => {
-    socket.on("FromAPI", (data) => {
-      console.log(data);
+    socket.on("message", (message) => {
+      setMessages([message, ...messages]);
     });
-    return () => socket.disconnect();
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
-    socket.on("messages", (message) => {
-      setMessages((prev) => [message, ...prev]);
+    socket.on("channel data", (data) => {
+      setChannel(data.channel);
+      setUsers(data.users);
+      setTotalUsers(data.totalUsers);
     });
     return () => socket.disconnect();
   }, []);
@@ -82,23 +41,35 @@ const ChatScreen = () => {
     // if no text return
     if (!newMessage.length) return;
 
-    socket.emit("newMessage", newMessage, setNewMessage(""));
+    socket.emit("sent message", newMessage, setNewMessage(""));
   };
 
   return (
     <div className="chat">
       <div className="chat-wrapper">
         <div className="chat-side">
-          <div className="chat-side-channels"></div>
-          <div className="chat-side-users"></div>
+          {user && user.username}
+          total in all channels: {totalUsers}
+          <ul className="chat-side-channels">
+            <li>Diablo</li>
+            <li>Starcraft</li>
+            <li>Path of Exile</li>
+            <li>Dota</li>
+          </ul>
+          <ul className="chat-side-users">
+            {users.length &&
+              users.map((user, id) => <li key={id}>{user.username}</li>)}
+          </ul>
         </div>
         <form className="chat-main" onSubmit={handleSendMessage}>
           <div className="chat-main-messages">
-            {messages.map((message, id) => (
-              <div key={id} className="chat-main-messages-bubble">
-                {message} <div className="tooltip">timestamp date</div>{" "}
-              </div>
-            ))}
+            {messages.length &&
+              messages.map(({ username, text, date }, id) => (
+                <div key={id} className="chat-main-messages-bubble">
+                  User: {username} Text: {text} Date: {date}{" "}
+                  <div className="tooltip">timestamp date</div>{" "}
+                </div>
+              ))}
           </div>
           <div className="chat-main-msg">
             <TextField
