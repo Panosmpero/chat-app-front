@@ -5,9 +5,9 @@ import styled from "styled-components";
 
 import { TextField, Typography } from "@material-ui/core";
 
-import openSocket from "socket.io-client";
+import io from "socket.io-client";
 const ENDPOINT = "http://localhost:8000";
-let socket = openSocket(ENDPOINT);
+let socket;
 const fixedChannels = [
   "Diablo",
   "Path of Exile",
@@ -27,7 +27,7 @@ const ChatScreen = (props) => {
   const [channelsUsers, setChannelsUsers] = useState({});
   const [totalUsers, setTotalUsers] = useState(0);
   const [inputActive, setInputActive] = useState(false);
-
+  
   console.log(channelsUsers, totalUsers);
   // messages bottom ref
   const messagesBottom = useRef(null);
@@ -41,15 +41,8 @@ const ChatScreen = (props) => {
   }, [props.history, user]);
 
   useEffect(() => {
-    socket.on("message", (message) => {
-      setMessages([message, ...messages]);
-    });
-    // scroll to bottom
-    scrollToBottom();
-    return () => socket.off("message");
-  }, [messages]);
+    socket = io(ENDPOINT)
 
-  useEffect(() => {
     socket.on("channel data", (data) => {
       console.log(data)
       setUsers(data.users);
@@ -58,6 +51,16 @@ const ChatScreen = (props) => {
     });
     return () => socket.off("channel data");
   }, []);
+
+  useEffect(() => {
+    socket.on("message", (message) => {
+      setMessages([message, ...messages]);
+    });
+    // scroll to bottom
+    scrollToBottom();
+    return () => socket.off("message")
+  }, [messages])
+
 
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
