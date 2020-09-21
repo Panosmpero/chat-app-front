@@ -1,106 +1,219 @@
+$background-dark: #232323;
+$background-side: rgb(72, 72, 72);
+$background-main: rgb(90, 90, 90);
+$red-text: #f50057;
+
 .chat {
   display: grid;
   place-items: center;
-  background-color: #f5f6fa;
+  background-color: $background-dark;
   height: 100vh;
 
   &-wrapper {
-    background-color: white;
+    background-color: rgb(66, 66, 66);
     width: 90vw;
     height: 100%;
     max-height: 90vh;
     box-shadow: 0 0 10px 1px black;
     border-radius: 10px;
     display: flex;
-    flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
   }
 
   &-side {
-    border: 1px black solid;
-    flex-basis: 30%;
+    flex-basis: 25%;
+    display: flex;
+    flex-direction: column;
+
+    &-header {
+      font-size: 1.5rem;
+      background: $background-side;
+      display: flex;
+      flex-basis: 10%;
+      align-items: center;
+
+      &-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: $background-dark;
+        margin-right: 1rem;
+      }
+    }
+
+    &-channels {
+      padding: .4rem;
+      padding-top: 0;
+      background: $background-side;
+      color: white;
+      min-height: 25%;
+      overflow-y: auto;
+      margin: .5rem 0;
+      position: relative;
+
+      .total-users {
+        position: sticky;
+        top: 0;
+        text-align: center;
+        background-color: inherit;
+        padding: .4rem;
+      }
+
+      li {
+        padding: 1rem;
+        border-radius: 1rem;
+
+        button {
+          background: inherit;
+          color: inherit;
+        }
+
+        &:nth-last-child(n+2) {
+          margin-bottom: .2rem;
+        }
+      }
+    }
+
+    &-users {
+      padding: 1rem;
+      background-color: $background-side;
+      color: white;
+      overflow-y: auto;
+      flex-basis: 65%;
+      min-height: 0;
+
+      li {
+        &:nth-last-child(n+2) {
+          margin-bottom: 1rem;
+        }
+      }
+    }
   }
 
   &-main {
-    height: 1rem;
-    flex-grow: 1;
+    flex-basis: 75%;
+    min-width: 0; // BEST TRICK EVER! --https://stackoverflow.com/questions/49747825/flex-basis-behavior-not-as-expected-but-max-width-works
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 0;
+    padding: 0 0.2rem 0.5rem 0;
+    background-color: $background-main;
 
     &-messages {
-      overflow-y: auto;
-      overflow-x: hidden;
       display: flex;
       flex-direction: column-reverse;
+      flex-grow: 1;
+      overflow-y: auto;
 
-      &-bubble {
-        background-color: #3f51b5;
+      &-block {
         color: white;
-        border-radius: 1rem;
+        border-radius: 2px;
         margin: 0.2rem;
         padding: 0.5rem;
-        width: fit-content;
-        max-width: 60%;
-        overflow-wrap: break-word;
+        word-wrap: break-word;
         position: relative;
 
         &:hover {
-          .tooltip {
+          background-color: $background-side;
+
+          .tooltip,
+          .reactions {
             visibility: visible;
-            left: 0;
-          }
+          }          
         }
-
-        &:nth-child(n + 5) {
-          align-self: flex-end;
-
+        // nth child 1 is the useRef div
+        &:nth-child(2) {
           &:hover {
-            .tooltip {
-              left: auto;
-              right: 0;
+            .reactions {
+              transform: translate(-10%, 0);
             }
           }
         }
+      }
+
+      &-header {
+        color: $red-text;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        margin-bottom: 0.2rem;
+      }
+
+      &-user {
+      }
+
+      &-date {
+      }
+
+      &-text {
+        max-width: 90%;
       }
     }
 
     &-msg {
       position: relative;
+      padding: 0 0 0 0.2rem;
 
       input {
         width: calc(100% - 4rem);
-      }
-
-      button {
-        position: absolute;
-        right: 0;
-        top: 0;
-        transform: translate(-20%, 32%);
-        z-index: 10;
-        font-size: 1rem;
-        background-color: #3f51b5;
         color: white;
-        border-radius: 50%;
-        padding: 0.5rem;
-
-        i {
-          transform: translateX(-5%);
-        }
       }
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+
+    &-track {
+      background-color: $background-side;
+      border-radius: 5px;
+    }
+
+    &-thumb {
+      background-color: $background-dark;
+      border-radius: 5px;
     }
   }
 }
 
 .tooltip {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.748);
+  background-color: $background-dark;
   padding: 0.2rem;
   border-radius: 4px;
   top: 0;
+  right: 0;
   transform: translate(0, -110%);
   z-index: 10;
   visibility: hidden;
   width: fit-content;
+}
+
+.reactions {
+  position: absolute;
+  visibility: hidden;
+  background-color: $background-dark;
+  right: 0;
+  bottom: 0;
+  width: fit-content;
+  padding: .3rem;
+  border-radius: 1rem;
+  transform: translate(-10%, 50%);
+  font-size: 1.2rem;
+
+  i {
+    &:nth-last-child(n+3) {
+      margin-right: .5rem;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: yellow;
+      transform: scale(1.2);
+    }
+  }
+}
+
+.activeChannel {
+  background-color: $background-main;
 }
