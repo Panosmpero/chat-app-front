@@ -1,5 +1,5 @@
 @import "./screens/ChatScreen";
-
+@import "./screens/HomeScreen";
 
 *,
 *::before,
@@ -7,6 +7,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
 }
 
 button {
@@ -18,4 +22,12 @@ button {
 
 li {
   list-style-type: none;
+}
+
+.move-left {
+  transform: translateX(-100%);
+}
+
+.move-right {
+  transform: translateX(100%);
 }

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { signin } from "../store/actions/userActions";
 
-import { Grid, TextField, Button, Typography } from "@material-ui/core";
+import { Grid, TextField, Button, Typography, Link } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
 import Spinner from "../components/Spinner";
@@ -21,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPosition: "center",
+    zIndex: "10",
+    transition: "all 0.5s",
     [theme.breakpoints.down("xs")]: {
       display: "none",
     },
@@ -44,17 +45,13 @@ const useStyles = makeStyles((theme) => ({
 const SigninScreen = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [redirect, setRedirect] = useState(false);
 
   const classes = useStyles();
   const dispatch = useDispatch();
   const { userInfo, loading, error } = useSelector((state) => state.userSignin);
   const { userInfo: registered } = useSelector((state) => state.userRegister);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(signin(username, password));
-  };
-
+  
   useEffect(() => {
     if (userInfo) props.history.push("/chat");
   }, [props.history, userInfo]);
@@ -63,8 +60,19 @@ const SigninScreen = (props) => {
     const registerSuccess = () => toast.success("Registered Successfully!");
     if (registered) registerSuccess(); 
   }, [registered]);
-  const state = useSelector(state => state)
-  console.log(state)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(signin(username, password));
+  };  
+
+  const handleRegister = () => {
+    setRedirect(true);
+    setTimeout(() => {
+      props.history.push("/register")
+    }, 500)
+  };
+  
   return (
     <>
       <ToastContainer
@@ -77,8 +85,8 @@ const SigninScreen = (props) => {
       />
       <Grid container className={classes.grid}>
         <CssBaseline />
-        <Grid item sm={5} md={6} className={classes.image} />
-        <Grid item xs={12} sm={7} md={6} className={classes.form}>
+        <Grid item sm={6} md={6} className={`${classes.image} ${redirect ? "move-right" : undefined}`} />
+        <Grid item xs={12} sm={6} md={6} className={classes.form}>
           <Spinner visible={loading} />
           <Typography component="h1" variant="h5" align="center">
             Sign in
@@ -123,7 +131,7 @@ const SigninScreen = (props) => {
                 {error}
               </Alert>
             )}
-            <Link to="/register" className={classes.register}>
+            <Link onClick={handleRegister} className={classes.register}>
               First time here? Register.
             </Link>
           </form>

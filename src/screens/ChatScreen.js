@@ -61,7 +61,6 @@ const ChatScreen = (props) => {
     return () => socket.off("message")
   }, [messages])
 
-
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
   };

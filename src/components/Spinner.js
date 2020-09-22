@@ -8,6 +8,7 @@ const Spinner = styled.div`
   bottom: 0;
   background-color: rgba(0,0,0,0.25);
   visibility: ${props => props.visible ? "visible" : "hidden"};
+  z-index: 1000;
 
   &:after {
     content: "";
