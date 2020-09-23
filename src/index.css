@@ -31,6 +31,7 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  color: rgba(255, 255, 255, 0.762);
 }
 
 .chat-side-header {
@@ -197,6 +198,7 @@
 .tooltip {
   position: absolute;
   background-color: #232323;
+  color: rgba(255, 255, 255, 0.762);
   padding: 0.2rem;
   border-radius: 4px;
   top: 0;
@@ -213,7 +215,17 @@
 .reactions {
   position: absolute;
   visibility: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: #232323;
+  color: rgba(255, 255, 255, 0.762);
   right: 0;
   bottom: 0;
   width: -webkit-fit-content;
@@ -255,6 +267,7 @@ body {
 }
 
 body {
+  font-family: 'Architects Daughter', cursive;
   overflow: hidden;
 }
 
@@ -264,6 +277,7 @@ button {
   -webkit-box-shadow: none;
           box-shadow: none;
   cursor: pointer;
+  font-family: inherit;
 }
 
 li {
@@ -278,5 +292,13 @@ li {
 .move-right {
   -webkit-transform: translateX(100%);
           transform: translateX(100%);
+}
+
+.underline {
+  position: relative;
+  width: 5rem;
+  height: .3rem;
+  background-color: blue;
+  margin: 0 auto 2rem auto;
 }
 /*# sourceMappingURL=index.css.map */

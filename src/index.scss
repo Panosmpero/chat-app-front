@@ -10,6 +10,7 @@
 }
 
 body {
+  font-family: 'Architects Daughter', cursive;
   overflow: hidden;
 }
 
@@ -18,6 +19,7 @@ button {
   outline: none;
   box-shadow: none;
   cursor: pointer;
+  font-family: inherit;
 }
 
 li {
@@ -30,4 +32,12 @@ li {
 
 .move-right {
   transform: translateX(100%);
+}
+
+.underline {
+  position: relative;
+  width: 5rem;
+  height: .3rem;
+  background-color: blue;
+  margin: 0 auto 2rem auto;
 }

@@ -1,7 +1,18 @@
+// blue test colors
+// $background-wrapper: rgb(8, 16, 64);
+// $background-dark: #c7cdfb;
+// $background-side:  blue;
+// $background-main: #a6b3ff;
+// $red-text: #f50057;
+// $white-text: rgb(5, 0, 64);
+
+// dark
+$background-wrapper: rgb(66, 66, 66);
 $background-dark: #232323;
 $background-side: rgb(72, 72, 72);
 $background-main: rgb(90, 90, 90);
 $red-text: #f50057;
+$white-text: rgba(255, 255, 255, 0.762);
 
 .chat {
   display: grid;
@@ -10,7 +21,7 @@ $red-text: #f50057;
   height: 100vh;
 
   &-wrapper {
-    background-color: rgb(66, 66, 66);
+    background-color: $background-wrapper;
     width: 90vw;
     height: 100%;
     max-height: 90vh;
@@ -25,6 +36,7 @@ $red-text: #f50057;
     flex-basis: 25%;
     display: flex;
     flex-direction: column;
+    color: $white-text;
 
     &-header {
       font-size: 1.5rem;
@@ -179,6 +191,7 @@ $red-text: #f50057;
 .tooltip {
   position: absolute;
   background-color: $background-dark;
+  color: $white-text;
   padding: 0.2rem;
   border-radius: 4px;
   top: 0;
@@ -192,7 +205,11 @@ $red-text: #f50057;
 .reactions {
   position: absolute;
   visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: $background-dark;
+  color: $white-text;
   right: 0;
   bottom: 0;
   width: fit-content;

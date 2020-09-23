@@ -1,7 +1,10 @@
-const userInfo = null
-// const userInfo = {username: "AAA"} 
+// const userInfo = null
+const userInfo = {username: "AAA"} 
 
 export default {
   userSignin: { userInfo },
-  userRegister: {}
+  userRegister: {},
+  sendMessage: {},
+  getMessages: {},
+  channelsData: [],
 }

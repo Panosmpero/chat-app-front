@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getChannelMessages,
+  sendMessage,
+} from "../store/actions/messageActions";
+import { getChannels } from "../store/actions/channelActions";
 import moment from "moment";
 import styled from "styled-components";
 
@@ -8,16 +13,16 @@ import { TextField, Typography } from "@material-ui/core";
 import io from "socket.io-client";
 const ENDPOINT = "http://localhost:8000";
 let socket;
-const fixedChannels = [
-  "Diablo",
-  "Path of Exile",
-  "Starcraft",
-  "Warcraft",
-  "Fortnite",
-  "Counterstrike",
-  "Dota",
-  "League of Legends",
-];
+// const channels = [
+//   "Diablo",
+//   "Path of Exile",
+//   "Starcraft",
+//   "Warcraft",
+//   "Fortnite",
+//   "Counterstrike",
+//   "Dota",
+//   "League of Legends",
+// ];
 
 const ChatScreen = (props) => {
   const [newMessage, setNewMessage] = useState("");
@@ -27,13 +32,22 @@ const ChatScreen = (props) => {
   const [channelsUsers, setChannelsUsers] = useState({});
   const [totalUsers, setTotalUsers] = useState(0);
   const [inputActive, setInputActive] = useState(false);
-  
-  console.log(channelsUsers, totalUsers);
+
   // messages bottom ref
   const messagesBottom = useRef(null);
 
   // get redux data
   const { userInfo: user } = useSelector((state) => state.userSignin);
+  const { loading, channels } = useSelector((state) => state.channelsData);
+  const { getMessages } = useSelector((state) => state.getMessages);
+  const dispatch = useDispatch();
+
+  if (channels) console.log(channels);
+  console.log(getMessages);
+
+  useEffect(() => {
+    dispatch(getChannels());
+  }, [dispatch]);
 
   useEffect(() => {
     // if not logged in redirect
@@ -41,10 +55,10 @@ const ChatScreen = (props) => {
   }, [props.history, user]);
 
   useEffect(() => {
-    socket = io(ENDPOINT)
+    socket = io(ENDPOINT);
 
     socket.on("channel data", (data) => {
-      console.log(data)
+      console.log(data);
       setUsers(data.users);
       setChannelsUsers(data.channelsUsers);
       setTotalUsers(data.totalUsers);
@@ -58,8 +72,8 @@ const ChatScreen = (props) => {
     });
     // scroll to bottom
     scrollToBottom();
-    return () => socket.off("message")
-  }, [messages])
+    return () => socket.off("message");
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
@@ -69,14 +83,14 @@ const ChatScreen = (props) => {
     e.preventDefault();
 
     // if no text return
-    if (!newMessage.length || !channel) return;
+    if (!newMessage.length) return;
+    if (!channel) {
+      setNewMessage("");
+      return alert("Join a channel first!");
+    }
 
-    // and emmit to backend
-    socket.emit(
-      "sent message",
-      { message: newMessage, channel },
-      setNewMessage("")
-    );
+    dispatch(sendMessage(user, newMessage, channel, socket));
+    setNewMessage("");
   };
 
   const joinChannel = (username, newChannel) => {
@@ -84,7 +98,8 @@ const ChatScreen = (props) => {
 
     if (channel) socket.emit("leave channel");
 
-    socket.emit("join channel", { username, channel: newChannel });
+    dispatch(getChannelMessages(username, newChannel, socket));
+    // socket.emit("join channel", { username, channel: newChannel });
     setChannel(newChannel);
   };
 
@@ -100,26 +115,29 @@ const ChatScreen = (props) => {
           </div>
           <ul className="chat-side-channels">
             <div className="total-users">Total Users: {totalUsers}</div>
-            {fixedChannels.map((fixedCh, id) => (
-              <li
-                key={id}
-                className={fixedCh === channel ? "activeChannel" : undefined}
-              >
-                <i className="fas fa-hashtag"></i>{" "}
-                <button
-                  value={fixedCh}
-                  onClick={(e) => joinChannel(user.username, e.target.value)}
+            {channels &&
+              channels.map((ch) => (
+                <li
+                  key={ch._id}
+                  id={ch._id}
+                  className={ch.title === channel ? "activeChannel" : undefined}
                 >
-                  {fixedCh}:{" "}
-                  {channelsUsers && channelsUsers[fixedCh]
-                    ? channelsUsers[fixedCh]
-                    : 0}
-                </button>
-              </li>
-            ))}
+                  <i className="fas fa-hashtag"></i>{" "}
+                  <button
+                    value={ch.title}
+                    onClick={(e) => joinChannel(user.username, e.target.value)}
+                  >
+                    {ch.title}:{" "}
+                    {channelsUsers && channelsUsers[ch.title]
+                      ? channelsUsers[ch.title]
+                      : 0}
+                  </button>
+                </li>
+              ))}
           </ul>
           <ul className="chat-side-users">
-            {users && users.length > 0 &&
+            {users &&
+              users.length > 0 &&
               users.map((user, id) => <li key={id}>{user.username}</li>)}
           </ul>
         </div>
@@ -127,7 +145,8 @@ const ChatScreen = (props) => {
           <div className="chat-main-messages">
             <div ref={messagesBottom}></div>
 
-            {messages && messages.length > 0 &&
+            {messages &&
+              messages.length > 0 &&
               messages.map(({ username, text, date }, id) => (
                 <div key={id} className="chat-main-messages-block">
                   <div className="chat-main-messages-header">
@@ -184,7 +203,7 @@ const SendButton = styled.button`
   font-size: 0.8rem;
   background-color: ${(props) =>
     props.active ? "#f50057" : " rgb(72, 72, 72)"};
-  transform: translate(-40%, 42%)
+  transform: translate(-15%, 35%)
     rotate(${(props) => (props.active ? "360" : "0")}deg);
   color: white;
   border-radius: 50%;
