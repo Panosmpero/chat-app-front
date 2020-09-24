@@ -42,8 +42,9 @@ const ChatScreen = (props) => {
   const { getMessages } = useSelector((state) => state.getMessages);
   const dispatch = useDispatch();
 
-  if (channels) console.log(channels);
-  console.log(getMessages);
+  // if (channels) console.log(channels);
+  // console.log(getMessages);
+  console.log(messages);
 
   useEffect(() => {
     dispatch(getChannels());
@@ -63,17 +64,22 @@ const ChatScreen = (props) => {
       setChannelsUsers(data.channelsUsers);
       setTotalUsers(data.totalUsers);
     });
+
     return () => socket.off("channel data");
   }, []);
 
+  // useEffect(() => {
+  //   if (getMessages) setMessages([...getMessages, ...messages]);
+  // }, [getMessages, messages]);
+
   useEffect(() => {
     socket.on("message", (message) => {
-      setMessages([message, ...messages]);
+      setMessages([...messages, message]);
     });
     // scroll to bottom
     scrollToBottom();
     return () => socket.off("message");
-  }, [messages]);
+  }, [messages, getMessages]);
 
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
@@ -97,6 +103,7 @@ const ChatScreen = (props) => {
     if (newChannel === channel) return;
 
     if (channel) socket.emit("leave channel");
+    setMessages("");
 
     dispatch(getChannelMessages(username, newChannel, socket));
     // socket.emit("join channel", { username, channel: newChannel });

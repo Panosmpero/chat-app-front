@@ -12,7 +12,7 @@ const sendMessage = ({ username }, message, channel, socket) => async (
       username,
       message,
     });
-    
+
     if (data) {
       // emmit to backend
       socket.emit("sent message", { message, channel });
@@ -37,14 +37,14 @@ const getChannelMessages = (username, channel, socket) => async (dispatch) => {
   try {
     const { data } = await Axios.get(url);
     console.log(username);
-    if (data) {
-      // emmit to backend
-      socket.emit("join channel", { username, channel });          
-    }
     dispatch({
       type: types.GET_MESSAGES_SUCCESS,
       payload: data,
     });
+    if (data) {
+      // emmit to backend
+      socket.emit("join channel", { username, channel });
+    }
   } catch (error) {
     dispatch({
       type: types.GET_MESSAGES_FAIL,
@@ -54,6 +54,6 @@ const getChannelMessages = (username, channel, socket) => async (dispatch) => {
         : error.message,
     });
   }
-}
+};
 
 export { sendMessage, getChannelMessages };
