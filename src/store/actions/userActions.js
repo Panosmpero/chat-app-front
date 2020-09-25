@@ -63,4 +63,11 @@ const register = (username, password, rePassword) => async (dispatch) => {
   }
 };
 
-export { signin, register };
+const logout = () => (dispatch) => {
+  dispatch({
+    type: types.USER_LOGOUT,
+    payload: null
+  });
+};
+
+export { signin, register, logout };

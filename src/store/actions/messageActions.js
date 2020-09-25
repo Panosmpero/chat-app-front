@@ -33,17 +33,19 @@ const sendMessage = ({ username }, message, channel, socket) => async (
 };
 
 const getChannelMessages = (username, channel, socket) => async (dispatch) => {
+  dispatch({
+    type: types.GET_MESSAGES_REQUEST
+  })
   const url = `${API_URL}/chat/get/${channel}`;
   try {
     const { data } = await Axios.get(url);
-    console.log(username);
     dispatch({
       type: types.GET_MESSAGES_SUCCESS,
       payload: data,
     });
     if (data) {
       // emmit to backend
-      socket.emit("join channel", { username, channel });
+      socket.emit("join channel", { username, channel, savedMessages: data });
     }
   } catch (error) {
     dispatch({

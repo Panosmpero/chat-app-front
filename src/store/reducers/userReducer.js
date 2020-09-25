@@ -12,6 +12,9 @@ const userSigninReducer = (state = initialState.userSignin, action) => {
     case types.USER_SIGNIN_FAIL:
       return { loading: false, error: action.payload };
 
+    case types.USER_LOGOUT:
+      return { loading: false, userInfo: action.payload };
+      
     default:
       return state;
   }
@@ -31,6 +34,6 @@ const userRegisterReducer = (state = initialState.userRegister, action) => {
     default:
       return state;
   }
-}
+};
 
 export { userSigninReducer, userRegisterReducer };

@@ -73,10 +73,11 @@ const Hero = styled.div`
   height: 100vh;
   width: ${(props) =>
     props.redirect === "signin" || props.redirect === "register" ? 50 : 100}%;
+
   transform: translateX(
     ${(props) => (props.redirect === "register" ? 100 : 0)}%
   );
-  background-image: url("/img/daniel-korpai-r73OFSry5AI-unsplash.jpg");
+  background: url("/img/daniel-korpai-r73OFSry5AI-unsplash.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -85,7 +86,23 @@ const Hero = styled.div`
   place-items: center;
 
   @media only screen and (max-width: 600px) {
-    background-image: none;
+    width: 100%;
+    background: rgb(9, 9, 121);
+    background: linear-gradient(
+      180deg,
+      rgba(9, 9, 121, 1) 34%,
+      rgba(6, 75, 165, 1) 53%,
+      rgba(4, 115, 191, 1) 72%,
+      rgba(0, 212, 255, 1) 100%
+    );
+    transform: translateX(
+      ${(props) =>
+        props.redirect === "register"
+          ? 100
+          : props.redirect === "signin"
+          ? -100
+          : 0}%
+    );
   }
 `;
 
@@ -98,7 +115,7 @@ const Container = styled.div`
   width: auto;
   min-height: 50%;
   border-radius: 10px;
-  background-color: rgb(192, 235, 251);
+  background-color: white;
   box-shadow: 0 0 10px 1px black;
   transition: all 0.5s ease-out;
   transition-delay: ${(props) => (props.welcome ? 0 : delay * 4)}s;

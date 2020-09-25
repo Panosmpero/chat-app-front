@@ -1,0 +1,71 @@
+// dark
+:root {
+  --background-wrapper: rgb(66, 66, 66);
+  --background-dark: #232323;
+  --background-side: rgb(72, 72, 72);
+  --background-main: rgb(90, 90, 90);
+  --red-text: #f50057;
+  --white-text: rgba(255, 255, 255, 0.762);
+}
+
+// blue test colors
+// :root {
+//   --background-wrapper: rgb(0, 0, 0);
+//   --background-dark: #dfeaebf3;
+//   --background-side: rgb(136, 235, 242);
+//   --background-main: #ffffff;
+//   --red-text: #f50057;
+//   --white-text: rgb(0, 0, 0);
+// }
+
+$background-wrapper: var(--background-wrapper);
+$background-dark: var(--background-dark);
+$background-side: var(--background-side);
+$background-main: var(--background-main);
+$red-text: var(--red-text);
+$white-text: var(--white-text);
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Architects Daughter", cursive;
+  overflow: hidden;
+}
+
+button {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+li {
+  list-style-type: none;
+}
+
+input {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+.move-left {
+  transform: translateX(-100%);
+}
+
+.move-right {
+  transform: translateX(100%);
+}
+
+.underline {
+  position: relative;
+  width: 5rem;
+  height: 0.3rem;
+  background-color: blue;
+  margin: 0 auto 2rem auto;
+}

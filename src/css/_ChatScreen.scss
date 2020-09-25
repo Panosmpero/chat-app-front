@@ -1,18 +1,4 @@
-// blue test colors
-// $background-wrapper: rgb(8, 16, 64);
-// $background-dark: #c7cdfb;
-// $background-side:  blue;
-// $background-main: #a6b3ff;
-// $red-text: #f50057;
-// $white-text: rgb(5, 0, 64);
-
-// dark
-$background-wrapper: rgb(66, 66, 66);
-$background-dark: #232323;
-$background-side: rgb(72, 72, 72);
-$background-main: rgb(90, 90, 90);
-$red-text: #f50057;
-$white-text: rgba(255, 255, 255, 0.762);
+@import "./global";
 
 .chat {
   display: grid;
@@ -30,6 +16,7 @@ $white-text: rgba(255, 255, 255, 0.762);
     display: flex;
     gap: 0.5rem;
     padding: 0.5rem;
+    background: $background-side;
   }
 
   &-side {
@@ -38,65 +25,54 @@ $white-text: rgba(255, 255, 255, 0.762);
     flex-direction: column;
     color: $white-text;
 
-    &-header {
-      font-size: 1.5rem;
-      background: $background-side;
+    &-wrapper {
       display: flex;
-      flex-basis: 10%;
-      align-items: center;
-
-      &-icon {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
-        background-color: $background-dark;
-        margin-right: 1rem;
-      }
+      flex-direction: column;
+      flex-basis: 90%;
+      min-height: 0;
     }
 
     &-channels {
-      padding: .4rem;
-      padding-top: 0;
-      background: $background-side;
-      color: white;
+      padding: 0.4rem;
       min-height: 25%;
       overflow-y: auto;
-      margin: .5rem 0;
+      margin: 0.5rem 0;
       position: relative;
+      border: 2px $background-main solid;
+      border-radius: 5px;
 
       .total-users {
         position: sticky;
         top: 0;
         text-align: center;
-        background-color: inherit;
-        padding: .4rem;
+        background-color: $background-side;
+        padding: 0.4rem;
+        z-index: 10;
+        border-bottom: 2px $background-main solid;
       }
 
       li {
         padding: 1rem;
         border-radius: 1rem;
+        display: flex;
+        justify-content: flex-start;
 
         button {
           background: inherit;
           color: inherit;
-        }
-
-        &:nth-last-child(n+2) {
-          margin-bottom: .2rem;
+          margin-left: 0.4rem;
         }
       }
     }
 
     &-users {
       padding: 1rem;
-      background-color: $background-side;
-      color: white;
       overflow-y: auto;
       flex-basis: 65%;
       min-height: 0;
 
       li {
-        &:nth-last-child(n+2) {
+        &:nth-last-child(n + 2) {
           margin-bottom: 1rem;
         }
       }
@@ -110,15 +86,15 @@ $white-text: rgba(255, 255, 255, 0.762);
     flex-direction: column;
     padding: 0 0.2rem 0.5rem 0;
     background-color: $background-main;
+    overflow-y: auto;
 
     &-messages {
       display: flex;
       flex-direction: column-reverse;
       flex-grow: 1;
-      overflow-y: auto;
 
       &-block {
-        color: white;
+        color: $white-text;
         border-radius: 2px;
         margin: 0.2rem;
         padding: 0.5rem;
@@ -131,13 +107,21 @@ $white-text: rgba(255, 255, 255, 0.762);
           .tooltip,
           .reactions {
             visibility: visible;
-          }          
+          }
         }
         // nth child 1 is the useRef div
         &:nth-child(2) {
           &:hover {
             .reactions {
               transform: translate(-10%, 0);
+            }
+          }
+        }
+
+        &:nth-last-child(1) {
+          &:hover {
+            .tooltip {
+              transform: translateY(0);
             }
           }
         }
@@ -159,6 +143,7 @@ $white-text: rgba(255, 255, 255, 0.762);
 
       &-text {
         max-width: 90%;
+        font-family: "Times New Roman", Times, serif;
       }
     }
 
@@ -168,7 +153,7 @@ $white-text: rgba(255, 255, 255, 0.762);
 
       input {
         width: calc(100% - 4rem);
-        color: white;
+        color: $white-text;
       }
     }
   }
@@ -213,14 +198,14 @@ $white-text: rgba(255, 255, 255, 0.762);
   right: 0;
   bottom: 0;
   width: fit-content;
-  padding: .3rem;
+  padding: 0.3rem;
   border-radius: 1rem;
   transform: translate(-10%, 50%);
   font-size: 1.2rem;
 
   i {
-    &:nth-last-child(n+3) {
-      margin-right: .5rem;
+    &:nth-last-child(n + 3) {
+      margin-right: 0.5rem;
     }
 
     &:hover {
@@ -233,4 +218,32 @@ $white-text: rgba(255, 255, 255, 0.762);
 
 .activeChannel {
   background-color: $background-main;
+}
+
+@media only screen and (max-width: 768px) {
+  .chat-wrapper {
+    flex-direction: column;
+  }
+
+  .chat-side {
+    min-height: 0;
+    flex-basis: 50%;
+
+    &-wrapper {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    &-channels {
+      padding: 1rem;
+      padding-top: 0;
+      margin: 0.4rem 0;
+      flex-basis: 50%;
+    }
+
+    &-users {
+      margin: 0.4rem 0;
+      flex-basis: 45%;
+    }
+  }
 }

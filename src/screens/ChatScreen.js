@@ -8,21 +8,15 @@ import { getChannels } from "../store/actions/channelActions";
 import moment from "moment";
 import styled from "styled-components";
 
-import { TextField, Typography } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
+import Spinner from "../components/Spinner";
+import Sidebar from "../components/Sidebar";
 
 import io from "socket.io-client";
+import { logout } from "../store/actions/userActions";
+import UserHeader from "../components/UserHeader";
 const ENDPOINT = "http://localhost:8000";
 let socket;
-// const channels = [
-//   "Diablo",
-//   "Path of Exile",
-//   "Starcraft",
-//   "Warcraft",
-//   "Fortnite",
-//   "Counterstrike",
-//   "Dota",
-//   "League of Legends",
-// ];
 
 const ChatScreen = (props) => {
   const [newMessage, setNewMessage] = useState("");
@@ -32,6 +26,7 @@ const ChatScreen = (props) => {
   const [channelsUsers, setChannelsUsers] = useState({});
   const [totalUsers, setTotalUsers] = useState(0);
   const [inputActive, setInputActive] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   // messages bottom ref
   const messagesBottom = useRef(null);
@@ -39,47 +34,59 @@ const ChatScreen = (props) => {
   // get redux data
   const { userInfo: user } = useSelector((state) => state.userSignin);
   const { loading, channels } = useSelector((state) => state.channelsData);
-  const { getMessages } = useSelector((state) => state.getMessages);
+  const { loading: messageLoading } = useSelector((state) => state.getMessages);
   const dispatch = useDispatch();
 
-  // if (channels) console.log(channels);
-  // console.log(getMessages);
-  console.log(messages);
+  // console.log(messages);
 
   useEffect(() => {
-    dispatch(getChannels());
-  }, [dispatch]);
-
-  useEffect(() => {
+    console.log("redirect effect");
+    console.log(user);
     // if not logged in redirect
-    if (!user) return props.history.push("/signin");
+    if (!user) {
+      socket.close();
+      return props.history.push("/signin");
+    }
   }, [props.history, user]);
 
   useEffect(() => {
+    // connect socket on initial render
     socket = io(ENDPOINT);
+    console.log("channel data effect");
 
+    // get channels to show
+    dispatch(getChannels());
+
+    // and share channel data
     socket.on("channel data", (data) => {
-      console.log(data);
       setUsers(data.users);
       setChannelsUsers(data.channelsUsers);
       setTotalUsers(data.totalUsers);
     });
 
     return () => socket.off("channel data");
-  }, []);
-
-  // useEffect(() => {
-  //   if (getMessages) setMessages([...getMessages, ...messages]);
-  // }, [getMessages, messages]);
+  }, [dispatch]);
 
   useEffect(() => {
+    console.log("socket message effect");
     socket.on("message", (message) => {
-      setMessages([...messages, message]);
+      // if welcome message set previous messages first
+      if (message.savedMessages)
+        setMessages([
+          {
+            text: message.text,
+            username: message.username,
+            date: message.date,
+          },
+          ...message.savedMessages,
+        ]);
+      // else just emit the new message
+      else setMessages([message, ...messages]);
     });
     // scroll to bottom
     scrollToBottom();
     return () => socket.off("message");
-  }, [messages, getMessages]);
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
@@ -90,63 +97,90 @@ const ChatScreen = (props) => {
 
     // if no text return
     if (!newMessage.length) return;
+
+    // if not in a channel raise alert
     if (!channel) {
       setNewMessage("");
       return alert("Join a channel first!");
     }
 
+    // dispatch new message to socket and save to database
+    // and clear input
     dispatch(sendMessage(user, newMessage, channel, socket));
     setNewMessage("");
   };
 
   const joinChannel = (username, newChannel) => {
+    // if already in same channel dont take action
     if (newChannel === channel) return;
 
-    if (channel) socket.emit("leave channel");
-    setMessages("");
+    // if already in a channel, leave it first and reset shown messages
+    if (channel) leaveChannel();
 
+    // dispatch api call to get past messages, emit welcome message
+    // and highlight selected channel
     dispatch(getChannelMessages(username, newChannel, socket));
-    // socket.emit("join channel", { username, channel: newChannel });
     setChannel(newChannel);
   };
 
+  const leaveChannel = () => {
+    setMessages("");
+    setChannel("");
+    socket.emit("leave channel");
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  const showSide = (bool) => {
+    setShowSidebar(bool);
+  };
+  console.log(messages)
   return (
     <div className="chat">
+      <Sidebar show={showSidebar} onClick={showSide} logout={handleLogout} />
+      <Spinner visible={loading || messageLoading} />
       <div className="chat-wrapper">
         <div className="chat-side">
-          <div className="chat-side-header">
-            <div className="chat-side-header-icon"></div>
-            <Typography component="h1" variant="h5" align="center">
-              {user && user.username} <br />
-            </Typography>
-          </div>
-          <ul className="chat-side-channels">
-            <div className="total-users">Total Users: {totalUsers}</div>
-            {channels &&
-              channels.map((ch) => (
-                <li
-                  key={ch._id}
-                  id={ch._id}
-                  className={ch.title === channel ? "activeChannel" : undefined}
-                >
-                  <i className="fas fa-hashtag"></i>{" "}
-                  <button
-                    value={ch.title}
-                    onClick={(e) => joinChannel(user.username, e.target.value)}
+          <UserHeader onClick={() => setShowSidebar(true)} user={user} pointer />
+          <div className="chat-side-wrapper">
+            <ul className="chat-side-channels">
+              <div className="total-users">Total Users: {totalUsers}</div>
+              {channels &&
+                channels.map((ch) => (
+                  <li
+                    key={ch._id}
+                    id={ch._id}
+                    className={
+                      ch.title === channel ? "activeChannel" : undefined
+                    }
                   >
-                    {ch.title}:{" "}
-                    {channelsUsers && channelsUsers[ch.title]
-                      ? channelsUsers[ch.title]
-                      : 0}
-                  </button>
-                </li>
-              ))}
-          </ul>
-          <ul className="chat-side-users">
-            {users &&
-              users.length > 0 &&
-              users.map((user, id) => <li key={id}>{user.username}</li>)}
-          </ul>
+                    <i className="fas fa-hashtag"></i>{" "}
+                    <button
+                      value={ch.title}
+                      onClick={(e) =>
+                        joinChannel(user.username, e.target.value)
+                      }
+                    >
+                      {ch.title}:{" "}
+                      {channelsUsers && channelsUsers[ch.title]
+                        ? channelsUsers[ch.title]
+                        : 0}
+                    </button>
+                  </li>
+                ))}
+            </ul>
+            <ul className="chat-side-users">
+              {users &&
+                users.length > 0 &&
+                users.map((user, id) => (
+                  <li key={id}>
+                    <UserHeader user={user} />
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
         <form className="chat-main" onSubmit={handleSendMessage}>
           <div className="chat-main-messages">
@@ -154,17 +188,17 @@ const ChatScreen = (props) => {
 
             {messages &&
               messages.length > 0 &&
-              messages.map(({ username, text, date }, id) => (
+              messages.map((user, id) => (
                 <div key={id} className="chat-main-messages-block">
                   <div className="chat-main-messages-header">
-                    <div className="chat-main-messages-user">{username}</div>
+                    <UserHeader user={user} />
                     <div className="chat-main-messages-date">
-                      {moment(date).format("hh:mm a")}{" "}
+                      {moment(user.date).format("hh:mm a")}{" "}
                     </div>
                   </div>
-                  <div className="chat-main-messages-text">{text}</div>
+                  <div className="chat-main-messages-text">{user.text}</div>
                   <div className="tooltip">
-                    {moment(date).format("LLLL")}
+                    {moment(user.date).format("LLLL")}
                   </div>{" "}
                   <div className="reactions">
                     <i className="far fa-smile-beam" title="happy"></i>
