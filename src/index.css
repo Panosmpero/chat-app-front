@@ -2,9 +2,18 @@
   --background-wrapper: rgb(66, 66, 66);
   --background-dark: #232323;
   --background-side: rgb(72, 72, 72);
-  --background-main: rgb(90, 90, 90);
+  --background-main: rgb(113, 113, 113);
   --red-text: #f50057;
   --white-text: rgba(255, 255, 255, 0.762);
+}
+
+:root {
+  --background-wrapper: rgb(0, 0, 0);
+  --background-dark: #1b0056f3;
+  --background-side: rgb(198, 240, 243);
+  --background-main: #ffffff;
+  --red-text: #f50057;
+  --white-text: rgb(0, 0, 0);
 }
 
 *,
@@ -128,7 +137,8 @@ input {
 }
 
 .chat-side-channels li {
-  padding: 1rem;
+  padding: 0.6rem;
+  margin: 0.2rem 0;
   border-radius: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -167,7 +177,7 @@ input {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding: 0 0.2rem 0.5rem 0;
+  padding-right: 0.2rem;
   background-color: var(--background-main);
   overflow-y: auto;
 }
@@ -188,7 +198,7 @@ input {
 .chat-main-messages-block {
   color: var(--white-text);
   border-radius: 2px;
-  margin: 0.2rem;
+  margin-left: 0.2rem;
   padding: 0.5rem;
   word-wrap: break-word;
   position: relative;
@@ -198,14 +208,25 @@ input {
   background-color: var(--background-side);
 }
 
-.chat-main-messages-block:hover .tooltip,
+.chat-main-messages-block:hover .tooltip {
+  opacity: 1;
+  -webkit-transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease;
+  -webkit-transition-delay: 1s;
+          transition-delay: 1s;
+}
+
 .chat-main-messages-block:hover .reactions {
-  visibility: visible;
+  opacity: 1;
 }
 
 .chat-main-messages-block:nth-child(2):hover .reactions {
   -webkit-transform: translate(-10%, 0);
           transform: translate(-10%, 0);
+}
+
+.chat-main-messages-block:nth-last-child(1) {
+  margin-top: .2rem;
 }
 
 .chat-main-messages-block:nth-last-child(1):hover .tooltip {
@@ -231,8 +252,11 @@ input {
 }
 
 .chat-main-msg {
-  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
   padding: 0 0 0 0.2rem;
+  background-color: var(--background-main);
 }
 
 .chat-main-msg input {
@@ -252,28 +276,34 @@ input {
 .chat ::-webkit-scrollbar-thumb {
   background-color: var(--background-dark);
   border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 4px 2px var(--background-side);
+          box-shadow: inset 0 0 4px 2px var(--background-side);
 }
 
 .tooltip {
   position: absolute;
   background-color: var(--background-dark);
-  color: var(--white-text);
+  color: var(--background-main);
   padding: 0.2rem;
   border-radius: 4px;
   top: 0;
   right: 0;
-  -webkit-transform: translate(0, -110%);
-          transform: translate(0, -110%);
-  z-index: 10;
-  visibility: hidden;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+  -webkit-transform: translate(0, -110%);
+          transform: translate(0, -110%);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+  -webkit-transition-delay: 0s;
+          transition-delay: 0s;
 }
 
 .reactions {
   position: absolute;
-  visibility: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -284,7 +314,7 @@ input {
       -ms-flex-align: center;
           align-items: center;
   background-color: var(--background-dark);
-  color: var(--white-text);
+  color: var(--background-main);
   right: 0;
   bottom: 0;
   width: -webkit-fit-content;
@@ -295,6 +325,7 @@ input {
   -webkit-transform: translate(-10%, 50%);
           transform: translate(-10%, 50%);
   font-size: 1.2rem;
+  opacity: 0;
 }
 
 .reactions i:nth-last-child(n + 3) {
@@ -347,13 +378,31 @@ input {
   }
 }
 
+@media only screen and (max-width: 600px) {
+  .chat-side-wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+}
+
 :root {
   --background-wrapper: rgb(66, 66, 66);
   --background-dark: #232323;
   --background-side: rgb(72, 72, 72);
-  --background-main: rgb(90, 90, 90);
+  --background-main: rgb(113, 113, 113);
   --red-text: #f50057;
   --white-text: rgba(255, 255, 255, 0.762);
+}
+
+:root {
+  --background-wrapper: rgb(0, 0, 0);
+  --background-dark: #1b0056f3;
+  --background-side: rgb(198, 240, 243);
+  --background-main: #ffffff;
+  --red-text: #f50057;
+  --white-text: rgb(0, 0, 0);
 }
 
 *,

@@ -52,7 +52,8 @@
       }
 
       li {
-        padding: 1rem;
+        padding: 0.6rem;
+        margin: 0.2rem 0;
         border-radius: 1rem;
         display: flex;
         justify-content: flex-start;
@@ -84,7 +85,7 @@
     min-width: 0; // BEST TRICK EVER! --https://stackoverflow.com/questions/49747825/flex-basis-behavior-not-as-expected-but-max-width-works
     display: flex;
     flex-direction: column;
-    padding: 0 0.2rem 0.5rem 0;
+    padding-right: 0.2rem;
     background-color: $background-main;
     overflow-y: auto;
 
@@ -96,7 +97,7 @@
       &-block {
         color: $white-text;
         border-radius: 2px;
-        margin: 0.2rem;
+        margin-left: 0.2rem;
         padding: 0.5rem;
         word-wrap: break-word;
         position: relative;
@@ -104,9 +105,14 @@
         &:hover {
           background-color: $background-side;
 
-          .tooltip,
+          .tooltip {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            transition-delay: 1s;
+          }
+
           .reactions {
-            visibility: visible;
+            opacity: 1;
           }
         }
         // nth child 1 is the useRef div
@@ -119,6 +125,7 @@
         }
 
         &:nth-last-child(1) {
+          margin-top: .2rem;
           &:hover {
             .tooltip {
               transform: translateY(0);
@@ -148,8 +155,10 @@
     }
 
     &-msg {
-      position: relative;
+      position: sticky;
+      bottom: 0;
       padding: 0 0 0 0.2rem;
+      background-color: $background-main;
 
       input {
         width: calc(100% - 4rem);
@@ -169,6 +178,7 @@
     &-thumb {
       background-color: $background-dark;
       border-radius: 5px;
+      box-shadow: inset 0 0 4px 2px $background-side;
     }
   }
 }
@@ -176,25 +186,27 @@
 .tooltip {
   position: absolute;
   background-color: $background-dark;
-  color: $white-text;
+  color: $background-main;
   padding: 0.2rem;
   border-radius: 4px;
   top: 0;
   right: 0;
+  width: fit-content;
   transform: translate(0, -110%);
   z-index: 10;
-  visibility: hidden;
-  width: fit-content;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  transition-delay: 0s;
 }
 
 .reactions {
   position: absolute;
-  visibility: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: $background-dark;
-  color: $white-text;
+  color: $background-main;
   right: 0;
   bottom: 0;
   width: fit-content;
@@ -202,6 +214,7 @@
   border-radius: 1rem;
   transform: translate(-10%, 50%);
   font-size: 1.2rem;
+  opacity: 0;
 
   i {
     &:nth-last-child(n + 3) {
@@ -245,5 +258,11 @@
       margin: 0.4rem 0;
       flex-basis: 45%;
     }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .chat-side-wrapper {
+    flex-direction: column;
   }
 }

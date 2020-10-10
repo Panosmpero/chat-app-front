@@ -1,9 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 
+import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    marginTop: "auto",
+    alignSelf: "flex-end",
+    minWidth: 120,
+  },
+  select: {
+    backgroundColor: "var(--background-main)",
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--background-side)"
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--red-text)"
+    },
+  },
+  label: {
+    color: "var(--white-text)"
+  },
+}));
+
 const Sidebar = ({ onClick, show, logout }) => {
+  const [theme, setTheme] = useState("bercord");
   const { pathname } = useLocation();
+  const classes = useStyles();
 
   // clicking outside of sidebar -> hides it
   useEffect(() => {
@@ -19,9 +45,19 @@ const Sidebar = ({ onClick, show, logout }) => {
 
   // when clicking sidebar link -> hide sidebar
   useEffect(() => {
-    onClick(false);
+    onClick(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  // change theme
+  useEffect(() => {
+    document.documentElement.style.setProperty("--background-wrapper", theme === "bercord" ? "rgb(0, 0, 0)" : "rgb(66, 66, 66)");
+    document.documentElement.style.setProperty("--background-dark", theme === "bercord" ? "#1b0056f3" : "#232323");
+    document.documentElement.style.setProperty("--background-side", theme === "bercord" ? "rgb(198, 240, 243)" : "rgb(72, 72, 72)");
+    document.documentElement.style.setProperty("--background-main", theme === "bercord" ? "#ffffff" : "rgb(113, 113, 113)");
+    document.documentElement.style.setProperty("--red-text", theme === "bercord" ? "#f50057" : "#f50057");
+    document.documentElement.style.setProperty("--white-text", theme === "bercord" ? "rgb(0, 0, 0)" : "rgba(255, 255, 255, 0.762)");
+  }, [theme])
 
   return (
     <SidebarContainer show={show}>
@@ -40,6 +76,20 @@ const Sidebar = ({ onClick, show, logout }) => {
           <button>Change Username</button>
           <button>Change Password</button>
           <button onClick={() => logout()}>Logout</button>
+          <FormControl notched={false} variant="outlined" className={classes.formControl}  >
+            <InputLabel className={classes.label} id="theme-select-label">Theme</InputLabel>
+            <Select
+              labelId="theme-select-label"
+              id="theme-select"
+              label="Theme"
+              className={classes.select}
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+            >
+              <MenuItem value="bercord">Bercord</MenuItem>
+              <MenuItem value="discord">Discord</MenuItem>
+            </Select>
+          </FormControl>
         </div>
       </SidebarWrapper>
     </SidebarContainer>
@@ -65,7 +115,7 @@ const SidebarWrapper = styled.div`
   left: 0;
   height: 100%;
   width: calc(15% + 14rem);
-  background-color: var(--background-dark);
+  background-color: var(--background-side);
   color: var(--white-text);
   z-index: 1001;
   pointer-events: all;
@@ -104,7 +154,7 @@ const SidebarWrapper = styled.div`
     .sidebar-icon {
       width: 5rem;
       height: 5rem;
-      background-color: var(--background-main);
+      background-color: black;
       border-radius: 50%;
     }
 

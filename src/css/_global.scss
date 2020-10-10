@@ -3,20 +3,20 @@
   --background-wrapper: rgb(66, 66, 66);
   --background-dark: #232323;
   --background-side: rgb(72, 72, 72);
-  --background-main: rgb(90, 90, 90);
+  --background-main: rgb(113, 113, 113);
   --red-text: #f50057;
   --white-text: rgba(255, 255, 255, 0.762);
 }
 
 // blue test colors
-// :root {
-//   --background-wrapper: rgb(0, 0, 0);
-//   --background-dark: #dfeaebf3;
-//   --background-side: rgb(136, 235, 242);
-//   --background-main: #ffffff;
-//   --red-text: #f50057;
-//   --white-text: rgb(0, 0, 0);
-// }
+:root {
+  --background-wrapper: rgb(0, 0, 0);
+  --background-dark: #1b0056f3;
+  --background-side: rgb(198, 240, 243);
+  --background-main: #ffffff;
+  --red-text: #f50057;
+  --white-text: rgb(0, 0, 0);
+}
 
 $background-wrapper: var(--background-wrapper);
 $background-dark: var(--background-dark);

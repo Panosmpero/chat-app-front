@@ -5,16 +5,16 @@ import {
   sendMessage,
 } from "../store/actions/messageActions";
 import { getChannels } from "../store/actions/channelActions";
+import { logout } from "../store/actions/userActions";
 import moment from "moment";
 import styled from "styled-components";
 
 import { TextField } from "@material-ui/core";
 import Spinner from "../components/Spinner";
 import Sidebar from "../components/Sidebar";
+import UserHeader from "../components/UserHeader";
 
 import io from "socket.io-client";
-import { logout } from "../store/actions/userActions";
-import UserHeader from "../components/UserHeader";
 const ENDPOINT = "http://localhost:8000";
 let socket;
 
@@ -44,7 +44,7 @@ const ChatScreen = (props) => {
     console.log(user);
     // if not logged in redirect
     if (!user) {
-      socket.close();
+      if (socket) socket.close();
       return props.history.push("/signin");
     }
   }, [props.history, user]);
@@ -80,7 +80,7 @@ const ChatScreen = (props) => {
           },
           ...message.savedMessages,
         ]);
-      // else just emit the new message
+      // else just set the new message
       else setMessages([message, ...messages]);
     });
     // scroll to bottom
