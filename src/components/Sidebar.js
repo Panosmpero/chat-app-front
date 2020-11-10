@@ -76,7 +76,7 @@ const Sidebar = ({ onClick, show, logout }) => {
           <button>Change Username</button>
           <button>Change Password</button>
           <button onClick={() => logout()}>Logout</button>
-          <FormControl notched={false} variant="outlined" className={classes.formControl}  >
+          <FormControl notched="false" variant="outlined" className={classes.formControl}  >
             <InputLabel className={classes.label} id="theme-select-label">Theme</InputLabel>
             <Select
               labelId="theme-select-label"

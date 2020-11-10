@@ -34,8 +34,8 @@ const sendMessage = ({ username }, message, channel, socket) => async (
 
 const getChannelMessages = (username, channel, socket) => async (dispatch) => {
   dispatch({
-    type: types.GET_MESSAGES_REQUEST
-  })
+    type: types.GET_MESSAGES_REQUEST,
+  });
   const url = `${API_URL}/chat/get/${channel}`;
   try {
     const { data } = await Axios.get(url);
@@ -59,18 +59,16 @@ const getChannelMessages = (username, channel, socket) => async (dispatch) => {
 };
 
 const like = (userId, messageId) => async (dispatch) => {
-  dispatch({ type: types.SEND_LIKE_REQUEST })
-  const url = `${API_URL}/reaction/like`
+  const url = `${API_URL}/chat/reaction/like`;
   try {
     const { data } = await Axios.put(url, {
-      userId, 
-      messageId
+      userId,
+      messageId,
     });
-    
-    if (data) {
-      dispatch({ type: types.SEND_LIKE_SUCCESS })
-    }
 
+    if (data) {
+      // socket update
+    }
   } catch (error) {
     dispatch({
       type: types.SEND_LIKE_FAIL,
@@ -80,10 +78,30 @@ const like = (userId, messageId) => async (dispatch) => {
         : error.message,
     });
   }
-}
+};
 
 const removeLike = (userId, messageId) => async (dispatch) => {
+  const url = `${API_URL}/chat/reaction/like/remove`;
+  try {
+    console.log(userId, messageId)
+    const { data } = await Axios.put(url, {
+      userId,
+      messageId,
+    });
 
-}
+    if (data) {
+      // socket update
+      console.log("remove success")
+    }
+  } catch (error) {
+    dispatch({
+      type: types.SEND_LIKE_FAIL,
+      // get custom error message from axios
+      payload: error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+};
 
 export { sendMessage, getChannelMessages, like, removeLike };

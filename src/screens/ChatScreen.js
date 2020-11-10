@@ -140,10 +140,10 @@ const ChatScreen = (props) => {
   };
 
   const handleLike = (userId, messageId, liked) => {
-    console.log("test")
+    console.log("test");
     liked
-    ? dispatch(removeLike(userId, messageId))
-    : dispatch(like(userId, messageId));
+      ? dispatch(removeLike(userId, messageId))
+      : dispatch(like(userId, messageId));
   };
   console.log(messages);
   return (
@@ -230,11 +230,13 @@ const ChatScreen = (props) => {
                   >
                     <i
                       className="far fa-thumbs-up"
+                      title="like"
                       onClick={() =>
                         handleLike(
                           currentUser.userId,
                           message._id,
-                          message.likes.includes(currentUser.userId)
+                          message.likes &&
+                            message.likes.includes(currentUser.userId)
                         )
                       }
                     ></i>
