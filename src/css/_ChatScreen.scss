@@ -200,34 +200,34 @@
   transition-delay: 0s;
 }
 
-.reactions {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: $background-dark;
-  color: $background-main;
-  right: 0;
-  bottom: 0;
-  width: fit-content;
-  padding: 0.3rem;
-  border-radius: 1rem;
-  transform: translate(-10%, 50%);
-  font-size: 1.2rem;
-  opacity: 0;
+// .reactions {
+//   position: absolute;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background-color: $background-dark;
+//   color: $background-main;
+//   right: 0;
+//   bottom: 0;
+//   width: fit-content;
+//   padding: 0.5rem;
+//   border-radius: 1rem;
+//   transform: translate(-10%, 50%);
+//   font-size: 1.2rem;
+//   opacity: 0;
 
-  i {
-    &:nth-last-child(n + 3) {
-      margin-right: 0.5rem;
-    }
+//   i {
+//     &:nth-last-child(n + 3) {
+//       margin-right: 0.5rem;
+//     }
 
-    &:hover {
-      cursor: pointer;
-      color: yellow;
-      transform: scale(1.2);
-    }
-  }
-}
+//     &:hover {
+//       cursor: pointer;
+//       color: yellow;
+//       transform: scale(1.2);
+//     }
+//   }
+// }
 
 .activeChannel {
   background-color: $background-main;

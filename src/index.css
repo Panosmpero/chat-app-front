@@ -302,43 +302,6 @@ input {
           transition-delay: 0s;
 }
 
-.reactions {
-  position: absolute;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  background-color: var(--background-dark);
-  color: var(--background-main);
-  right: 0;
-  bottom: 0;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-  padding: 0.3rem;
-  border-radius: 1rem;
-  -webkit-transform: translate(-10%, 50%);
-          transform: translate(-10%, 50%);
-  font-size: 1.2rem;
-  opacity: 0;
-}
-
-.reactions i:nth-last-child(n + 3) {
-  margin-right: 0.5rem;
-}
-
-.reactions i:hover {
-  cursor: pointer;
-  color: yellow;
-  -webkit-transform: scale(1.2);
-          transform: scale(1.2);
-}
-
 .activeChannel {
   background-color: var(--background-main);
 }

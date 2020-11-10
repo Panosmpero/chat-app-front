@@ -58,4 +58,32 @@ const getChannelMessages = (username, channel, socket) => async (dispatch) => {
   }
 };
 
-export { sendMessage, getChannelMessages };
+const like = (userId, messageId) => async (dispatch) => {
+  dispatch({ type: types.SEND_LIKE_REQUEST })
+  const url = `${API_URL}/reaction/like`
+  try {
+    const { data } = await Axios.put(url, {
+      userId, 
+      messageId
+    });
+    
+    if (data) {
+      dispatch({ type: types.SEND_LIKE_SUCCESS })
+    }
+
+  } catch (error) {
+    dispatch({
+      type: types.SEND_LIKE_FAIL,
+      // get custom error message from axios
+      payload: error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
+}
+
+const removeLike = (userId, messageId) => async (dispatch) => {
+
+}
+
+export { sendMessage, getChannelMessages, like, removeLike };

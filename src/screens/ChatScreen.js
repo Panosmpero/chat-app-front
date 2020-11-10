@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getChannelMessages,
+  like,
+  removeLike,
   sendMessage,
 } from "../store/actions/messageActions";
 import { getChannels } from "../store/actions/channelActions";
@@ -32,7 +34,7 @@ const ChatScreen = (props) => {
   const messagesBottom = useRef(null);
 
   // get redux data
-  const { userInfo: user } = useSelector((state) => state.userSignin);
+  const { userInfo: currentUser } = useSelector((state) => state.userSignin);
   const { loading, channels } = useSelector((state) => state.channelsData);
   const { loading: messageLoading } = useSelector((state) => state.getMessages);
   const dispatch = useDispatch();
@@ -41,13 +43,13 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     console.log("redirect effect");
-    console.log(user);
+    console.log(currentUser);
     // if not logged in redirect
-    if (!user) {
+    if (!currentUser) {
       if (socket) socket.close();
       return props.history.push("/signin");
     }
-  }, [props.history, user]);
+  }, [props.history, currentUser]);
 
   useEffect(() => {
     // connect socket on initial render
@@ -106,7 +108,7 @@ const ChatScreen = (props) => {
 
     // dispatch new message to socket and save to database
     // and clear input
-    dispatch(sendMessage(user, newMessage, channel, socket));
+    dispatch(sendMessage(currentUser, newMessage, channel, socket));
     setNewMessage("");
   };
 
@@ -136,14 +138,25 @@ const ChatScreen = (props) => {
   const showSide = (bool) => {
     setShowSidebar(bool);
   };
-  console.log(messages)
+
+  const handleLike = (userId, messageId, liked) => {
+    console.log("test")
+    liked
+    ? dispatch(removeLike(userId, messageId))
+    : dispatch(like(userId, messageId));
+  };
+  console.log(messages);
   return (
     <div className="chat">
       <Sidebar show={showSidebar} onClick={showSide} logout={handleLogout} />
       <Spinner visible={loading || messageLoading} />
       <div className="chat-wrapper">
         <div className="chat-side">
-          <UserHeader onClick={() => setShowSidebar(true)} user={user} pointer />
+          <UserHeader
+            onClick={() => setShowSidebar(true)}
+            user={currentUser}
+            pointer
+          />
           <div className="chat-side-wrapper">
             <ul className="chat-side-channels">
               <div className="total-users">Total Users: {totalUsers}</div>
@@ -160,7 +173,7 @@ const ChatScreen = (props) => {
                     <button
                       value={ch.title}
                       onClick={(e) =>
-                        joinChannel(user.username, e.target.value)
+                        joinChannel(currentUser.username, e.target.value)
                       }
                     >
                       {ch.title}:{" "}
@@ -188,25 +201,49 @@ const ChatScreen = (props) => {
 
             {messages &&
               messages.length > 0 &&
-              messages.map((user, id) => (
+              messages.map((message, id) => (
                 <div key={id} className="chat-main-messages-block">
                   <div className="chat-main-messages-header">
-                    <UserHeader user={user} />
+                    <UserHeader user={message} />
                     <div className="chat-main-messages-date">
-                      {moment(user.date).format("hh:mm a")}{" "}
+                      {moment(message.date).format("hh:mm a")}{" "}
                     </div>
                   </div>
-                  <div className="chat-main-messages-text">{user.text}</div>
+                  <div className="chat-main-messages-text">{message.text}</div>
                   <div className="tooltip">
-                    {moment(user.date).format("LLLL")}
+                    {moment(message.date).format("LLLL")}
                   </div>{" "}
-                  <div className="reactions">
+                  {/* <div className="reactions">
                     <i className="far fa-smile-beam" title="happy"></i>
                     <i className="far fa-frown" title="sad"></i>
                     <i className="far fa-grin-hearts" title="love"></i>
                     <i className="far fa-sad-tear" title="cry"></i>
                     <i className="far fa-angry" title="angry"></i>
-                  </div>
+                  </div> */}
+                  <Reactions
+                    liked={
+                      message.likes &&
+                      message.likes.includes(currentUser.userId)
+                    }
+                    likes={message.likes && message.likes.length > 0}
+                    className="reactions"
+                  >
+                    <i
+                      className="far fa-thumbs-up"
+                      onClick={() =>
+                        handleLike(
+                          currentUser.userId,
+                          message._id,
+                          message.likes.includes(currentUser.userId)
+                        )
+                      }
+                    ></i>
+                    {message.likes && message.likes.length > 0 && (
+                      <div style={{ marginLeft: "0.2rem" }}>
+                        {message.likes.length}
+                      </div>
+                    )}
+                  </Reactions>
                 </div>
               ))}
           </div>
@@ -253,5 +290,34 @@ const SendButton = styled.button`
 
   i {
     transform: translateX(-5%);
+  }
+`;
+
+const Reactions = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-dark);
+  color: ${(props) => (props.liked ? "yellow" : "var(--background-main)")};
+  right: 0;
+  bottom: 0;
+  width: fit-content;
+  padding: 0.4rem;
+  border-radius: 1rem;
+  transform: translate(-10%, 50%);
+  font-size: 0.8rem;
+  opacity: ${(props) => (props.likes ? 1 : 0)};
+
+  i {
+    &:nth-last-child(n + 3) {
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: yellow;
+      transform: scale(1.2);
+    }
   }
 `;

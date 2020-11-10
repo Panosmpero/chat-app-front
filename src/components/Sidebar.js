@@ -45,7 +45,7 @@ const Sidebar = ({ onClick, show, logout }) => {
 
   // when clicking sidebar link -> hide sidebar
   useEffect(() => {
-    onClick(true);
+    onClick(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
