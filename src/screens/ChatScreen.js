@@ -90,6 +90,26 @@ const ChatScreen = (props) => {
     return () => socket.off("message");
   }, [messages]);
 
+  useEffect(() => {
+    console.log("socket like effect");
+    socket.on("like", ({ userId, messageId }) => {
+      setMessages(messages.map(message => message._id === messageId 
+        ? {  ...message, likes: [...message.likes, userId]}
+        : message));
+    });
+    return () => socket.off("like");
+  }, [messages]);
+
+  useEffect(() => {
+    console.log("socket removeLike effect");
+    socket.on("removeLike", ({ userId, messageId }) => {
+      setMessages(messages.map(message => message._id === messageId 
+        ? {  ...message, likes: message.likes.filter(user => user !== userId)}
+        : message));
+    });
+    return () => socket.off("removeLike");
+  }, [messages]);
+
   const scrollToBottom = () => {
     messagesBottom.current.scrollIntoView();
   };
@@ -139,13 +159,16 @@ const ChatScreen = (props) => {
     setShowSidebar(bool);
   };
 
-  const handleLike = (userId, messageId, liked) => {
+  const handleLike = (userId, messageId, liked, socket) => {
     console.log("test");
+    if (!messageId) return alert("Bercord Bot: I know you like me but let's keep this between us!")
     liked
-      ? dispatch(removeLike(userId, messageId))
-      : dispatch(like(userId, messageId));
+      ? dispatch(removeLike(userId, messageId, channel, socket))
+      : dispatch(like(userId, messageId, channel, socket));
   };
+
   console.log(messages);
+
   return (
     <div className="chat">
       <Sidebar show={showSidebar} onClick={showSide} logout={handleLogout} />
@@ -236,12 +259,13 @@ const ChatScreen = (props) => {
                           currentUser.userId,
                           message._id,
                           message.likes &&
-                            message.likes.includes(currentUser.userId)
+                          message.likes.includes(currentUser.userId),
+                          socket
                         )
                       }
                     ></i>
                     {message.likes && message.likes.length > 0 && (
-                      <div style={{ marginLeft: "0.2rem" }}>
+                      <div style={{ marginLeft: "0.1rem" }}>
                         {message.likes.length}
                       </div>
                     )}

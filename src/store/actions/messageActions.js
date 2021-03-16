@@ -58,7 +58,7 @@ const getChannelMessages = (username, channel, socket) => async (dispatch) => {
   }
 };
 
-const like = (userId, messageId) => async (dispatch) => {
+const like = (userId, messageId, channel, socket) => async (dispatch) => {
   const url = `${API_URL}/chat/reaction/like`;
   try {
     const { data } = await Axios.put(url, {
@@ -67,7 +67,7 @@ const like = (userId, messageId) => async (dispatch) => {
     });
 
     if (data) {
-      // socket update
+      socket.emit("sent like", { userId, messageId, channel });
     }
   } catch (error) {
     dispatch({
@@ -80,18 +80,16 @@ const like = (userId, messageId) => async (dispatch) => {
   }
 };
 
-const removeLike = (userId, messageId) => async (dispatch) => {
+const removeLike = (userId, messageId, channel, socket) => async (dispatch) => {
   const url = `${API_URL}/chat/reaction/like/remove`;
   try {
-    console.log(userId, messageId)
     const { data } = await Axios.put(url, {
       userId,
       messageId,
     });
 
     if (data) {
-      // socket update
-      console.log("remove success")
+      socket.emit("sent removeLike", { userId, messageId, channel });
     }
   } catch (error) {
     dispatch({
